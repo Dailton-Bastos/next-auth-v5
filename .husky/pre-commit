@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo '[Husky] pre-commit'
+
+echo 'Please be patient, this may take a while...'
+
+npx --no-install lint-staged && yarn test ||
+(
+    echo '❌ Yoo, you have a problem in your code. ❌
+          Fix, add changes and try commit again.';
+    false;
+)
+
+echo '🎉 No error found: committing this now.... ✨🚀🏄‍♂️🍻'
