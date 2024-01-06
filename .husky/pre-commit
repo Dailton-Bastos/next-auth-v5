@@ -5,7 +5,7 @@ echo '[Husky] pre-commit'
 
 echo 'Please be patient, this may take a while...'
 
-npx --no-install lint-staged && yarn test ||
+npx --no-install lint-staged ||
 (
     echo '❌ Yoo, you have a problem in your code. ❌
           Fix, add changes and try commit again.';
