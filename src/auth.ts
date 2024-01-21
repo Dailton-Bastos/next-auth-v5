@@ -1,4 +1,5 @@
 import authConfig from '@/auth.config'
+import { getTwoFactorConfirmationByUserId } from '@/data/twoFactorConfirmation'
 import { getUserById } from '@/data/user'
 import { db } from '@/lib/db'
 import { PrismaAdapter } from '@auth/prisma-adapter'
@@ -28,15 +29,28 @@ export const {
       // Allow OAuth without email verification
       if (account?.provider !== 'credentials') return true
 
+      if (!user?.id) return false
+
       const existingUser = await getUserById(user.id)
 
       // Prevent sing in without email verification
       if (!existingUser?.emailVerified) return false
 
-      // TODO: Add 2FA check
+      if (existingUser?.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser?.id
+        )
+
+        if (!twoFactorConfirmation) return false
+
+        await db.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation?.id },
+        })
+      }
 
       return true
     },
+    // @ts-expect-error session callback params does not include token next-auth "^5.0.0-beta.4"
     async session({ token, session }) {
       if (token?.sub && session?.user) {
         session.user.id = token.sub
