@@ -2,9 +2,9 @@
 
 import React from 'react'
 
+import { LoginForm } from '@/components/auth/login-form'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useRouter } from 'next/navigation'
-
-import { Button } from '../ui/button'
 
 type PropsType = {
   children: React.ReactNode
@@ -23,11 +23,16 @@ export const LoginButton = ({
     router.push('/auth/login')
   }
 
-  if (mode === 'modal') return <span>TODO: Implement modal</span>
+  if (mode === 'modal') {
+    return (
+      <Dialog>
+        <DialogTrigger asChild={asChild}>{children}</DialogTrigger>
+        <DialogContent className='p-0 w-auto bg-transparent border-none'>
+          <LoginForm />
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
-  return (
-    <Button onClick={onClick} variant='secondary' size='lg' asChild={asChild}>
-      <span>{children}</span>
-    </Button>
-  )
+  return <span onClick={onClick}>{children}</span>
 }
